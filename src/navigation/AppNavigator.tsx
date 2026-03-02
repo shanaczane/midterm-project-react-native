@@ -5,10 +5,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { RootStackParamList, TabParamList } from "../types";
 import { useTheme } from "../context/ThemeContext";
 
-// Import screens
-import JobFinderScreen from "../screens/JobFinderScreen";
-import SavedJobsScreen from "../screens/SavedJobsScreen";
-import ApplicationFormScreen from "../screens/ApplicationFormScreen";
+// Import screens from new folder structure
+import JobFinderScreen from "../screens/JobFinder/JobFinderScreen";
+import SavedJobsScreen from "../screens/SavedJobs/SavedJobsScreen";
+import ApplicationFormScreen from "../screens/ApplicationForm/ApplicationFormScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
@@ -40,9 +40,9 @@ const TabNavigator = () => {
         headerTintColor: theme.text,
         headerRight: () => <ThemeToggleButton />,
         headerShadowVisible: false,
-
         tabBarStyle: {
           backgroundColor: theme.background,
+          borderTopColor: theme.border,
         },
         tabBarActiveTintColor: theme.primary,
         tabBarInactiveTintColor: theme.textTertiary,
@@ -54,7 +54,9 @@ const TabNavigator = () => {
         options={{
           title: "Job Finder",
           tabBarLabel: "Find Jobs",
-          tabBarIcon: () => <Text style={{ fontSize: 20 }}>🔍</Text>,
+          tabBarIcon: ({ color }) => (
+            <Text style={{ fontSize: 20 }}>🔍</Text>
+          ),
         }}
       />
       <Tab.Screen
@@ -63,7 +65,9 @@ const TabNavigator = () => {
         options={{
           title: "Saved Jobs",
           tabBarLabel: "Saved",
-          tabBarIcon: () => <Text style={{ fontSize: 20 }}>📌</Text>,
+          tabBarIcon: ({ color }) => (
+            <Text style={{ fontSize: 20 }}>📌</Text>
+          ),
         }}
       />
     </Tab.Navigator>
@@ -97,6 +101,7 @@ const AppNavigator = () => {
         component={ApplicationFormScreen}
         options={{
           title: "Apply for Job",
+          headerRight: () => <ThemeToggleButton />,
         }}
       />
     </Stack.Navigator>
