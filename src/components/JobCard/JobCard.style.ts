@@ -31,11 +31,17 @@ export const styles = StyleSheet.create({
     fontWeight: "500",
   },
   meta: {
-    gap: 4,
+    gap: 5,
     marginBottom: 10,
+  },
+  metaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
   },
   metaText: {
     fontSize: 13,
+    flex: 1,
   },
   tags: {
     flexDirection: "row",
