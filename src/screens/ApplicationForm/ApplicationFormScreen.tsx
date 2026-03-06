@@ -40,7 +40,7 @@ const ApplicationFormScreen = () => {
   const route = useRoute<RouteProps>();
   const { theme } = useTheme();
 
-  const { markApplied } = useSavedJobs();
+  const { markApplied, isJobApplied } = useSavedJobs();
   const { job, fromSavedJobs } = route.params;
 
   const [name, setName] = useState("");
@@ -79,6 +79,10 @@ const ApplicationFormScreen = () => {
   };
 
   const handleSubmit = () => {
+    if (isJobApplied(job.id)) {
+      navigation.goBack();
+      return;
+    }
     if (!validate()) return;
     markApplied(job);
     setShowSuccess(true);
