@@ -1,19 +1,18 @@
 import React from "react";
-import { TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { RootStackParamList, TabParamList } from "../types";
 import { useTheme } from "../context/ThemeContext";
-
-// Import screens from new folder structure
 import JobFinderScreen from "../screens/JobFinder/JobFinderScreen";
 import SavedJobsScreen from "../screens/SavedJobs/SavedJobsScreen";
+import AppliedJobsScreen from "../screens/AppliedJobs/AppliedJobsScreen";
 import ApplicationFormScreen from "../screens/ApplicationForm/ApplicationFormScreen";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
-// Theme toggle button component
 const ThemeToggleButton = () => {
   const { isDark, toggleTheme } = useTheme();
 
@@ -22,21 +21,22 @@ const ThemeToggleButton = () => {
       onPress={toggleTheme}
       style={{ marginRight: 16, padding: 4 }}
     >
-      <Text style={{ fontSize: 22 }}>{isDark ? "☀️" : "🌙"}</Text>
+      <Ionicons
+        name={isDark ? "sunny-outline" : "moon-outline"}
+        size={22}
+        color={isDark ? "#FFD700" : "#2D3748"}
+      />
     </TouchableOpacity>
   );
 };
 
-// Bottom tab navigator
 const TabNavigator = () => {
   const { theme } = useTheme();
 
   return (
     <Tab.Navigator
       screenOptions={{
-        headerStyle: {
-          backgroundColor: theme.background,
-        },
+        headerStyle: { backgroundColor: theme.background },
         headerTintColor: theme.text,
         headerRight: () => <ThemeToggleButton />,
         headerShadowVisible: false,
@@ -54,8 +54,12 @@ const TabNavigator = () => {
         options={{
           title: "Job Finder",
           tabBarLabel: "Find Jobs",
-          tabBarIcon: ({ color }) => (
-            <Text style={{ fontSize: 20 }}>🔍</Text>
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "search" : "search-outline"}
+              size={22}
+              color={color}
+            />
           ),
         }}
       />
@@ -65,8 +69,27 @@ const TabNavigator = () => {
         options={{
           title: "Saved Jobs",
           tabBarLabel: "Saved",
-          tabBarIcon: ({ color }) => (
-            <Text style={{ fontSize: 20 }}>📌</Text>
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "bookmark" : "bookmark-outline"}
+              size={22}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="AppliedJobs"
+        component={AppliedJobsScreen}
+        options={{
+          title: "Applied Jobs",
+          tabBarLabel: "Applied",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "checkmark-circle" : "checkmark-circle-outline"}
+              size={22}
+              color={color}
+            />
           ),
         }}
       />
@@ -74,21 +97,16 @@ const TabNavigator = () => {
   );
 };
 
-// Root stack navigator
 const AppNavigator = () => {
   const { theme } = useTheme();
 
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: {
-          backgroundColor: theme.background,
-        },
+        headerStyle: { backgroundColor: theme.background },
         headerTintColor: theme.text,
         headerShadowVisible: false,
-        contentStyle: {
-          backgroundColor: theme.background,
-        },
+        contentStyle: { backgroundColor: theme.background },
       }}
     >
       <Stack.Screen
