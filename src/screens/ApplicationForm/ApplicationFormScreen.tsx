@@ -8,12 +8,15 @@ import {
   Modal,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types";
 import { useTheme } from "../../context/ThemeContext";
+import { useSavedJobs } from "../../context/SavedJobContext";
 import {
   validateName,
   validateEmail,
@@ -37,6 +40,7 @@ const ApplicationFormScreen = () => {
   const route = useRoute<RouteProps>();
   const { theme } = useTheme();
 
+  const { markApplied } = useSavedJobs();
   const { job, fromSavedJobs } = route.params;
 
   const [name, setName] = useState("");
@@ -76,6 +80,7 @@ const ApplicationFormScreen = () => {
 
   const handleSubmit = () => {
     if (!validate()) return;
+    markApplied(job);
     setShowSuccess(true);
   };
 
@@ -136,17 +141,47 @@ const ApplicationFormScreen = () => {
               { backgroundColor: theme.card, borderColor: theme.border },
             ]}
           >
-            <Text style={[styles.jobTitle, { color: theme.text }]}>
-              {job.title}
-            </Text>
-            <Text style={[styles.jobCompany, { color: theme.textSecondary }]}>
-              {job.companyName}
-            </Text>
-            <Text style={[styles.jobMeta, { color: theme.textTertiary }]}>
-              {job.locations.length > 0 ? `📍 ${job.locations.join(", ")}` : ""}
-              {job.workModel ? `  •  💼 ${job.workModel}` : ""}
-              {`\n💰 ${salary}`}
-            </Text>
+            <View style={styles.jobCardHeader}>
+              {!!job.companyLogo && (
+                <Image
+                  source={{ uri: job.companyLogo }}
+                  style={styles.jobLogo}
+                  resizeMode="contain"
+                />
+              )}
+              <View style={styles.jobCardHeaderText}>
+                <Text style={[styles.jobTitle, { color: theme.text }]}>
+                  {job.title}
+                </Text>
+                <Text style={[styles.jobCompany, { color: theme.textSecondary }]}>
+                  {job.companyName}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.jobMetaList}>
+              {job.locations.length > 0 && (
+                <View style={styles.jobMetaRow}>
+                  <Ionicons name="location-outline" size={13} color={theme.textTertiary} />
+                  <Text style={[styles.jobMeta, { color: theme.textTertiary }]}>
+                    {job.locations.join(", ")}
+                  </Text>
+                </View>
+              )}
+              {!!job.workModel && (
+                <View style={styles.jobMetaRow}>
+                  <Ionicons name="briefcase-outline" size={13} color={theme.textTertiary} />
+                  <Text style={[styles.jobMeta, { color: theme.textTertiary }]}>
+                    {job.workModel}
+                  </Text>
+                </View>
+              )}
+              <View style={styles.jobMetaRow}>
+                <Ionicons name="cash-outline" size={13} color={theme.textTertiary} />
+                <Text style={[styles.jobMeta, { color: theme.textTertiary }]}>
+                  {salary}
+                </Text>
+              </View>
+            </View>
           </View>
 
           {/* Application Form */}
@@ -294,7 +329,7 @@ const ApplicationFormScreen = () => {
           <View
             style={[styles.modalBox, { backgroundColor: theme.card }]}
           >
-            <Text style={styles.modalIcon}>🎉</Text>
+            <Ionicons name="checkmark-circle" size={60} color={theme.success} style={styles.modalIcon} />
             <Text style={[styles.modalTitle, { color: theme.text }]}>
               Application Submitted!
             </Text>
