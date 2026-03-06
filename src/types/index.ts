@@ -26,4 +26,5 @@ export type RootStackParamList = {
 export type TabParamList = {
   JobFinder: undefined;
   SavedJobs: undefined;
+  AppliedJobs: undefined;
 };
