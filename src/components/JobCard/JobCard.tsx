@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { Job } from "../../types";
 import { Theme } from "../../constants/theme";
 import { styles } from "./JobCard.style";
@@ -8,15 +9,43 @@ interface JobCardProps {
   job: Job;
   theme: Theme;
   isSaved: boolean;
+  isApplied: boolean;
   onSave: () => void;
+  onUnsave: () => void;
   onApply: () => void;
 }
 
-const JobCard = ({ job, theme, isSaved, onSave, onApply }: JobCardProps) => {
+const JobCard = ({ job, theme, isSaved, isApplied, onSave, onUnsave, onApply }: JobCardProps) => {
   const salary =
     job.minSalary && job.maxSalary
       ? `${job.currency || "USD"} ${job.minSalary.toLocaleString()} – ${job.maxSalary.toLocaleString()}`
       : "Salary not specified";
+
+  const handleSavePress = () => {
+    if (isSaved) {
+      Alert.alert(
+        "Remove from Saved",
+        `Remove "${job.title}" from your saved jobs?`,
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Remove", style: "destructive", onPress: onUnsave },
+        ]
+      );
+    } else {
+      onSave();
+    }
+  };
+
+  const handleApplyPress = () => {
+    if (isApplied) {
+      Alert.alert(
+        "Already Applied",
+        `You have already applied for "${job.title}" at ${job.companyName}.`
+      );
+    } else {
+      onApply();
+    }
+  };
 
   return (
     <View
@@ -45,21 +74,32 @@ const JobCard = ({ job, theme, isSaved, onSave, onApply }: JobCardProps) => {
 
       <View style={styles.meta}>
         {job.locations.length > 0 && (
-          <Text style={[styles.metaText, { color: theme.textSecondary }]}>
-            📍 {job.locations.join(", ")}
-          </Text>
+          <View style={styles.metaRow}>
+            <Ionicons name="location-outline" size={14} color={theme.textSecondary} />
+            <Text style={[styles.metaText, { color: theme.textSecondary }]}>
+              {job.locations.join(", ")}
+            </Text>
+          </View>
         )}
-        <Text style={[styles.metaText, { color: theme.textSecondary }]}>
-          💼 {job.jobType}
-          {job.workModel ? ` • ${job.workModel}` : ""}
-        </Text>
-        <Text style={[styles.metaText, { color: theme.textSecondary }]}>
-          💰 {salary}
-        </Text>
-        {!!job.seniorityLevel && (
+        <View style={styles.metaRow}>
+          <Ionicons name="briefcase-outline" size={14} color={theme.textSecondary} />
           <Text style={[styles.metaText, { color: theme.textSecondary }]}>
-            🎯 {job.seniorityLevel}
+            {job.jobType}{job.workModel ? ` • ${job.workModel}` : ""}
           </Text>
+        </View>
+        <View style={styles.metaRow}>
+          <Ionicons name="cash-outline" size={14} color={theme.textSecondary} />
+          <Text style={[styles.metaText, { color: theme.textSecondary }]}>
+            {salary}
+          </Text>
+        </View>
+        {!!job.seniorityLevel && (
+          <View style={styles.metaRow}>
+            <Ionicons name="star-outline" size={14} color={theme.textSecondary} />
+            <Text style={[styles.metaText, { color: theme.textSecondary }]}>
+              {job.seniorityLevel}
+            </Text>
+          </View>
         )}
       </View>
 
@@ -92,8 +132,7 @@ const JobCard = ({ job, theme, isSaved, onSave, onApply }: JobCardProps) => {
               ? { backgroundColor: theme.success }
               : { borderWidth: 1, borderColor: theme.primary },
           ]}
-          onPress={onSave}
-          disabled={isSaved}
+          onPress={handleSavePress}
         >
           <Text
             style={[
@@ -106,11 +145,16 @@ const JobCard = ({ job, theme, isSaved, onSave, onApply }: JobCardProps) => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: theme.primary }]}
-          onPress={onApply}
+          style={[
+            styles.button,
+            isApplied
+              ? { backgroundColor: theme.success }
+              : { backgroundColor: theme.primary },
+          ]}
+          onPress={handleApplyPress}
         >
           <Text style={[styles.buttonText, { color: theme.background }]}>
-            Apply
+            {isApplied ? "Applied ✓" : "Apply"}
           </Text>
         </TouchableOpacity>
       </View>
