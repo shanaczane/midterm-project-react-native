@@ -5,7 +5,9 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  Image,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -19,7 +21,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const SavedJobsScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const { theme } = useTheme();
-  const { savedJobs, removeJob } = useSavedJobs();
+  const { savedJobs, removeJob, isJobApplied } = useSavedJobs();
 
   const handleRemove = (job: Job) => {
     Alert.alert(
@@ -87,56 +89,56 @@ const SavedJobsScreen = () => {
                 ]}
               >
                 <View style={styles.cardHeader}>
-                  <Text
-                    style={[styles.cardTitle, { color: theme.text }]}
-                    numberOfLines={2}
-                  >
-                    {item.title}
-                  </Text>
-                  <Text
-                    style={[styles.cardCompany, { color: theme.textSecondary }]}
-                  >
-                    {item.companyName}
-                  </Text>
+                  {!!item.companyLogo && (
+                    <Image
+                      source={{ uri: item.companyLogo }}
+                      style={styles.logo}
+                      resizeMode="contain"
+                    />
+                  )}
+                  <View style={styles.cardHeaderText}>
+                    <Text
+                      style={[styles.cardTitle, { color: theme.text }]}
+                      numberOfLines={2}
+                    >
+                      {item.title}
+                    </Text>
+                    <Text
+                      style={[styles.cardCompany, { color: theme.textSecondary }]}
+                    >
+                      {item.companyName}
+                    </Text>
+                  </View>
                 </View>
 
                 <View style={styles.cardMeta}>
                   {item.locations.length > 0 && (
-                    <Text
-                      style={[
-                        styles.cardMetaText,
-                        { color: theme.textSecondary },
-                      ]}
-                    >
-                      📍 {item.locations.join(", ")}
-                    </Text>
+                    <View style={styles.metaRow}>
+                      <Ionicons name="location-outline" size={14} color={theme.textSecondary} />
+                      <Text style={[styles.cardMetaText, { color: theme.textSecondary }]}>
+                        {item.locations.join(", ")}
+                      </Text>
+                    </View>
                   )}
-                  <Text
-                    style={[
-                      styles.cardMetaText,
-                      { color: theme.textSecondary },
-                    ]}
-                  >
-                    💼 {item.jobType}
-                    {item.workModel ? ` • ${item.workModel}` : ""}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.cardMetaText,
-                      { color: theme.textSecondary },
-                    ]}
-                  >
-                    💰 {salary}
-                  </Text>
-                  {!!item.seniorityLevel && (
-                    <Text
-                      style={[
-                        styles.cardMetaText,
-                        { color: theme.textSecondary },
-                      ]}
-                    >
-                      🎯 {item.seniorityLevel}
+                  <View style={styles.metaRow}>
+                    <Ionicons name="briefcase-outline" size={14} color={theme.textSecondary} />
+                    <Text style={[styles.cardMetaText, { color: theme.textSecondary }]}>
+                      {item.jobType}{item.workModel ? ` • ${item.workModel}` : ""}
                     </Text>
+                  </View>
+                  <View style={styles.metaRow}>
+                    <Ionicons name="cash-outline" size={14} color={theme.textSecondary} />
+                    <Text style={[styles.cardMetaText, { color: theme.textSecondary }]}>
+                      {salary}
+                    </Text>
+                  </View>
+                  {!!item.seniorityLevel && (
+                    <View style={styles.metaRow}>
+                      <Ionicons name="star-outline" size={14} color={theme.textSecondary} />
+                      <Text style={[styles.cardMetaText, { color: theme.textSecondary }]}>
+                        {item.seniorityLevel}
+                      </Text>
+                    </View>
                   )}
                 </View>
 
@@ -178,18 +180,32 @@ const SavedJobsScreen = () => {
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    style={[styles.button, { backgroundColor: theme.primary }]}
-                    onPress={() =>
-                      navigation.navigate("ApplicationForm", {
-                        job: item,
-                        fromSavedJobs: true,
-                      })
-                    }
+                    style={[
+                      styles.button,
+                      {
+                        backgroundColor: isJobApplied(item.id)
+                          ? theme.success
+                          : theme.primary,
+                      },
+                    ]}
+                    onPress={() => {
+                      if (isJobApplied(item.id)) {
+                        Alert.alert(
+                          "Already Applied",
+                          `You have already applied for "${item.title}" at ${item.companyName}.`
+                        );
+                      } else {
+                        navigation.navigate("ApplicationForm", {
+                          job: item,
+                          fromSavedJobs: true,
+                        });
+                      }
+                    }}
                   >
                     <Text
                       style={[styles.buttonText, { color: theme.background }]}
                     >
-                      Apply
+                      {isJobApplied(item.id) ? "Applied ✓" : "Apply"}
                     </Text>
                   </TouchableOpacity>
                 </View>
