@@ -35,7 +35,18 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
   },
   cardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 10,
+    gap: 10,
+  },
+  logo: {
+    width: 44,
+    height: 44,
+    borderRadius: 8,
+  },
+  cardHeaderText: {
+    flex: 1,
   },
   cardTitle: {
     fontSize: 17,
@@ -47,11 +58,17 @@ export const styles = StyleSheet.create({
     fontWeight: "500",
   },
   cardMeta: {
-    gap: 4,
+    gap: 5,
     marginBottom: 12,
+  },
+  metaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
   },
   cardMetaText: {
     fontSize: 13,
+    flex: 1,
   },
   tags: {
     flexDirection: "row",
