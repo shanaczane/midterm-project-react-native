@@ -8,7 +8,18 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
   },
   header: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
     marginBottom: 10,
+  },
+  logo: {
+    width: 48,
+    height: 48,
+    borderRadius: 8,
+  },
+  headerText: {
+    flex: 1,
   },
   title: {
     fontSize: 17,

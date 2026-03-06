@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import { Job } from "../../types";
 import { Theme } from "../../constants/theme";
 import { styles } from "./JobCard.style";
@@ -26,15 +26,21 @@ const JobCard = ({ job, theme, isSaved, onSave, onApply }: JobCardProps) => {
       ]}
     >
       <View style={styles.header}>
-        <Text
-          style={[styles.title, { color: theme.text }]}
-          numberOfLines={2}
-        >
-          {job.title}
-        </Text>
-        <Text style={[styles.company, { color: theme.textSecondary }]}>
-          {job.companyName}
-        </Text>
+        {!!job.companyLogo && (
+          <Image
+            source={{ uri: job.companyLogo }}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+        )}
+        <View style={styles.headerText}>
+          <Text style={[styles.title, { color: theme.text }]} numberOfLines={2}>
+            {job.title}
+          </Text>
+          <Text style={[styles.company, { color: theme.textSecondary }]}>
+            {job.companyName}
+          </Text>
+        </View>
       </View>
 
       <View style={styles.meta}>
