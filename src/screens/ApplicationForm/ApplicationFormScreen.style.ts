@@ -14,6 +14,20 @@ export const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 24,
   },
+  jobCardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    marginBottom: 12,
+  },
+  jobLogo: {
+    width: 48,
+    height: 48,
+    borderRadius: 8,
+  },
+  jobCardHeaderText: {
+    flex: 1,
+  },
   jobTitle: {
     fontSize: 18,
     fontWeight: "700",
@@ -22,11 +36,18 @@ export const styles = StyleSheet.create({
   jobCompany: {
     fontSize: 15,
     fontWeight: "500",
-    marginBottom: 8,
+  },
+  jobMetaList: {
+    gap: 5,
+  },
+  jobMetaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
   },
   jobMeta: {
     fontSize: 13,
-    lineHeight: 20,
+    flex: 1,
   },
   sectionTitle: {
     fontSize: 20,
@@ -95,7 +116,6 @@ export const styles = StyleSheet.create({
     maxWidth: 340,
   },
   modalIcon: {
-    fontSize: 48,
     marginBottom: 12,
   },
   modalTitle: {
