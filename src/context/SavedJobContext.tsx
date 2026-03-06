@@ -6,13 +6,21 @@ import React, {
   ReactNode,
 } from "react";
 import { Job } from "../types";
-import { getSavedJobs, storeSavedJobs } from "../utils/storage";
+import {
+  getSavedJobs,
+  storeSavedJobs,
+  getAppliedJobs,
+  storeAppliedJobs,
+} from "../utils/storage";
 
 interface SavedJobContextType {
   savedJobs: Job[];
   saveJob: (job: Job) => void;
   removeJob: (jobId: string) => void;
   isJobSaved: (jobId: string) => boolean;
+  appliedJobs: Job[];
+  markApplied: (job: Job) => void;
+  isJobApplied: (jobId: string) => boolean;
 }
 
 const SavedJobContext = createContext<SavedJobContextType | undefined>(
@@ -21,9 +29,11 @@ const SavedJobContext = createContext<SavedJobContextType | undefined>(
 
 export const SavedJobProvider = ({ children }: { children: ReactNode }) => {
   const [savedJobs, setSavedJobs] = useState<Job[]>([]);
+  const [appliedJobs, setAppliedJobs] = useState<Job[]>([]);
 
   useEffect(() => {
     getSavedJobs().then(setSavedJobs);
+    getAppliedJobs().then(setAppliedJobs);
   }, []);
 
   const saveJob = (job: Job) => {
@@ -45,8 +55,30 @@ export const SavedJobProvider = ({ children }: { children: ReactNode }) => {
 
   const isJobSaved = (jobId: string) => savedJobs.some((j) => j.id === jobId);
 
+  const markApplied = (job: Job) => {
+    setAppliedJobs((prev) => {
+      if (prev.some((j) => j.id === job.id)) return prev;
+      const updated = [...prev, job];
+      storeAppliedJobs(updated);
+      return updated;
+    });
+  };
+
+  const isJobApplied = (jobId: string) =>
+    appliedJobs.some((j) => j.id === jobId);
+
   return (
-    <SavedJobContext.Provider value={{ savedJobs, saveJob, removeJob, isJobSaved }}>
+    <SavedJobContext.Provider
+      value={{
+        savedJobs,
+        saveJob,
+        removeJob,
+        isJobSaved,
+        appliedJobs,
+        markApplied,
+        isJobApplied,
+      }}
+    >
       {children}
     </SavedJobContext.Provider>
   );
