@@ -33,7 +33,13 @@ export const SavedJobProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     getSavedJobs().then(setSavedJobs);
-    getAppliedJobs().then(setAppliedJobs);
+    getAppliedJobs().then((jobs) => {
+      const unique = jobs.filter(
+        (job, index, self) => index === self.findIndex((j) => j.id === job.id)
+      );
+      if (unique.length !== jobs.length) storeAppliedJobs(unique);
+      setAppliedJobs(unique);
+    });
   }, []);
 
   const saveJob = (job: Job) => {
