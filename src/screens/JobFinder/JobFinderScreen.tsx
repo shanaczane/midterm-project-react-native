@@ -22,7 +22,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const JobFinderScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const { theme } = useTheme();
-  const { saveJob, isJobSaved } = useSavedJobs();
+  const { saveJob, removeJob, isJobSaved, isJobApplied } = useSavedJobs();
 
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
@@ -127,7 +127,9 @@ const JobFinderScreen = () => {
               job={item}
               theme={theme}
               isSaved={isJobSaved(item.id)}
+              isApplied={isJobApplied(item.id)}
               onSave={() => saveJob(item)}
+              onUnsave={() => removeJob(item.id)}
               onApply={() =>
                 navigation.navigate("ApplicationForm", {
                   job: item,
